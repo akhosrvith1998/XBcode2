@@ -1,4 +1,4 @@
-aiogram==3.0.0
+aiogram==3.20.0.post0
 aiogram-dialog==2.3.1
 aiogram-contrib==1.1.4
 aiogram-calendar==0.6.0
