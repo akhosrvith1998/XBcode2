@@ -1,13 +1,14 @@
 from aiogram import Dispatcher, types
-from aiogram.dispatcher.filters import Command
-from aiogram.utils.callback_data import CallbackData
+from aiogram.filters import InlineQueryFilter
+from aiogram_inline_paginations.paginator import Paginator
 from aiocache import cached
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from models.whisper import Whisper
 from utils.photo import get_user_profile_photo
 from aiogram_dialog import Dialog, Window, DialogManager
-from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.text import Const
+from aiogram_dialog.widgets.kbd import Button
 
 async def get_user_id_from_username(bot, username):
     try:
@@ -50,7 +51,7 @@ async def inline_query(query: types.InlineQuery, dialog_manager: DialogManager):
                         id=f"history_{whisper.id}",
                         title=f"نجوا به {whisper.receiver_username or whisper.receiver_id}",
                         description=f"ارسال‌شده در {whisper.created_at}",
-                        thumb_url=whisper.photo_file_id,
+                        thumbnail_url=whisper.photo_file_id,
                         input_message_content=types.InputTextMessageContent(
                             message_text=f"نجوا به {whisper.receiver_username or whisper.receiver_id}"
                         ),
@@ -62,7 +63,8 @@ async def inline_query(query: types.InlineQuery, dialog_manager: DialogManager):
                         )
                     )
                 )
-            await query.answer(results, cache_time=0)
+            paginator = Paginator(data=results, per_page=5)
+            await query.answer(paginator.get_page(0), cache_time=0)
             return
 
         parts = query_text.split(" ", 1)
@@ -123,9 +125,9 @@ async def inline_query(query: types.InlineQuery, dialog_manager: DialogManager):
 
             cb = CallbackData("whisper", "action", "whisper_id")
             keyboard = types.InlineKeyboardMarkup(row_width=3).add(
-                types.InlineKeyboardButton("✍️ پاسخ", callback_data=cb.new(action="reply", whisper_id=whisper.id)),
-                types.InlineKeyboardButton("👁 مشاهده", callback_data=cb.new(action="view", whisper_id=whisper.id)),
-                types.InlineKeyboardButton("🗑 حذف", callback_data=cb.new(action="delete", whisper_id=whisper.id)),
+                types.InlineKeyboardButton("✍️ پاسخ", callback_data=cb.new(action="reply", whisper_id=str(whisper.id))),
+                types.InlineKeyboardButton("👁 مشاهده", callback_data=cb.new(action="view", whisper_id=str(whisper.id))),
+                types.InlineKeyboardButton("🗑 حذف", callback_data=cb.new(action="delete", whisper_id=str(whisper.id))),
             )
             results.append(
                 types.InlineQueryResultArticle(
@@ -142,4 +144,4 @@ async def inline_query(query: types.InlineQuery, dialog_manager: DialogManager):
             await query.answer(results, cache_time=0)
 
 def register_inline_handlers(dp: Dispatcher):
-    dp.register_inline_handler(inline_query)
+    dp.inline_query()(inline_query)
