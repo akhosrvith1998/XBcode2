@@ -204,14 +204,13 @@ async def process_reply_message(message: types.Message, target_id: int):
         await session.commit()
 
         keyboard = types.InlineKeyboardMarkup(row_width=3).add(
-            types.InlineKeyboardButton("✍️ پاسخ", callback_data=cb.new(action="reply", whisper_id=str(whisper.id))),
-            types.InlineKeyboardButton("👁 مشاهده", callback_data=cb.new(action="view", whisper_id=str(whisper.id))),
-            types.InlineKeyboardButton("🗑 حذف", callback_data=cb.new(action="delete", whisper_id=str)),
-whisper.id))),
-        )
-            await message.reply(
-                f"نجوا به {receiver_id}\n\n```\n{secret_message}\n```",
-                parse_mode="MarkdownV2",
-                reply_markup=keyboard,
-            )
-            await message.reply(f"نجوا به {receiver_id} ارسال شد.")
+    types.InlineKeyboardButton("✍️ پاسخ", callback_data=cb.new(action="reply", whisper_id=str(whisper.id))),
+    types.InlineKeyboardButton("👁 مشاهده", callback_data=cb.new(action="view", whisper_id=str(whisper.id))),
+    types.InlineKeyboardButton("🗑 حذف", callback_data=cb.new(action="delete", whisper_id=str(whisper.id))),
+)
+await message.reply(
+    f"نجوا به {receiver_id}\n\n```\n{secret_message}\n```",
+    parse_mode="MarkdownV2",
+    reply_markup=keyboard,
+)
+await message.reply(f"نجوا به {receiver_id} ارسال شد.")
