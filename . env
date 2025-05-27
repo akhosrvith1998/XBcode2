@@ -1,0 +1,5 @@
+BOT_TOKEN=7844345303:AAGyDzl4oJjm646ePdx0YQP32ARuhWL6qHk
+REDIS_URL=redis://localhost:6379/0
+DATABASE_URL=sqlite:///whispers.db
+WEBHOOK_URL=https://<your-service-name>.onrender.com/webhook
+WEBHOOK_PATH=/webhook
