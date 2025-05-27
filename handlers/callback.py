@@ -1,8 +1,8 @@
 from aiogram import Dispatcher, types
 from aiogram.utils.callback_data import CallbackData
 from sqlalchemy.ext.asyncio import AsyncSession
-from models.whisper import Whisper
 from sqlalchemy import select
+from models.whisper import Whisper
 
 cb = CallbackData("whisper", "action", "whisper_id")
 
@@ -51,4 +51,4 @@ async def process_whisper_action(query: types.CallbackQuery, callback_data: dict
                 await query.answer("فقط فرستنده می‌تواند نجوا را حذف کند!", show_alert=True)
 
 def register_callback_handlers(dp: Dispatcher):
-    dp.register_callback_query_handler(process_whisper_action, cb.filter())
+    dp.callback_query()(process_whisper_action, cb.filter())
