@@ -1,5 +1,9 @@
 from sqlalchemy import Column, Integer, BigInteger, String, DateTime
-from sqlalchemy.ext.asyncio import AsyncBase
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import declarative_base
+
+AsyncBase = declarative_base(cls=AsyncAttrs)
+
 from sqlalchemy.sql import func
 
 class Whisper(AsyncBase):
