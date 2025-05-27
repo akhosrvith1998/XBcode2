@@ -4,7 +4,6 @@ aiogram-contrib==1.1.4
 aiogram-calendar==0.6.0
 aiogram-widgets==1.2.7
 aiogram-inline-paginations==0.1.12
-aiogram-i18n==3.0.0b2
 
 SQLAlchemy==2.0.35
 alembic==1.13.3
