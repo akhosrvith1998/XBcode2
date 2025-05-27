@@ -1,8 +1,9 @@
 import asyncio
 import uvloop
 from aiogram import Bot, Dispatcher
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from aiogram.utils import executor
+from aiogram.fsm.storage.redis import RedisStorage
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
+from aiohttp import web
 from dotenv import load_dotenv
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -26,42 +27,41 @@ WEBHOOK_PATH = os.getenv("WEBHOOK_PATH")
 
 # تنظیمات Bot و Dispatcher
 bot = Bot(token=BOT_TOKEN)
-storage = RedisStorage2(host=REDIS_URL.split("://")[1].split(":")[0], port=6379)
-dp = Dispatcher(bot, storage=storage)
+storage = RedisStorage(redis_url=REDIS_URL)
+dp = Dispatcher(bot=bot, storage=storage)
 
 # تنظیمات دیتابیس
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 # ثبت میدل‌ور
-dp.middleware.setup(ReplyMiddleware())
+dp.message.middleware(ReplyMiddleware())
 
 # ثبت هندلرها
 register_inline_handlers(dp)
 register_callback_handlers(dp)
 register_reply_handlers(dp)
 
-async def on_startup(_):
+async def on_startup(app: web.Application):
     # ایجاد جداول دیتابیس
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     # تنظیم وب‌هوک
-    await bot.set_webhook(WEBHOOK_URL + WEBHOOK_PATH)
-    print(f"Webhook set to {WEBHOOK_URL + WEBHOOK_PATH}")
+    await bot.set_webhook(f"{WEBHOOK_URL}{WEBHOOK_PATH}")
+    print(f"Webhook set to {WEBHOOK_URL}{WEBHOOK_PATH}")
 
-async def on_shutdown(_):
+async def on_shutdown(app: web.Application):
     await bot.delete_webhook()
     await dp.storage.close()
-    await dp.storage.wait_closed()
     await engine.dispose()
 
+def main():
+    app = web.Application()
+    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
+    setup_application(app, dp, bot=bot)
+    app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
+    web.run_app(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
+
 if __name__ == "__main__":
-    from aiogram.utils.executor import start_webhook
-    start_webhook(
-        dispatcher=dp,
-        webhook_path=WEBHOOK_PATH,
-        on_startup=on_startup,
-        on_shutdown=on_shutdown,
-        host="0.0.0.0",
-        port=int(os.getenv("PORT", 10000)),
-    )
+    main()
