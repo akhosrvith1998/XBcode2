@@ -117,16 +117,17 @@ async def inline_query(query: types.InlineQuery):
                 types.InlineKeyboardButton("🗑 حذف", callback_data=cb.new(action="delete", whisper_id=str(whisper.id))),
             )
             results.append(
-                types.InlineQueryResultArticle(
-                    id=str(whisper_id),
-                    title=f"* ارسال نجوا به {receiver_username or receiver_id}",
-                    input_message_content=types.InputTextMessageContent(
-                        f"نجوا به {receiver_username or receiver_id}\n```\n{secret_message}\n```",
-                    parse_mode="MarkdownV2"
-                    ),
-                reply_markup=keyboard,
-                description=f"پیام: {secret_message[:30]}..."
-            )
+    types.InlineQueryResultArticle(
+        id=str(whisper_id),
+        title=f"* ارسال نجوا به {receiver_username or receiver_id}",
+        input_message_content=types.InputTextMessageContent(
+            f"نجوا به {receiver_username or receiver_id}\n```\n{secret_message}\n```",
+            parse_mode="MarkdownV2"
+        ),
+        reply_markup=keyboard,
+        description=f"پیام: {secret_message[:30]}..."
+    )
+)
             await query.answer(results, cache_time=0)
 
 async def process_whisper_action(query: types.CallbackQuery, callback_data: dict):
