@@ -1,6 +1,6 @@
 from alembic import context
 from sqlalchemy import engine_from_config, pool
-from models.whisper import Base
+from models.whisper import AsyncBase
 import os
 
 config = context.config
@@ -14,7 +14,7 @@ connectable = engine_from_config(
 with connectable.connect() as connection:
     context.configure(
         connection=connection,
-        target_metadata=Base.metadata
+        target_metadata=AsyncBase.metadata
     )
     with context.begin_transaction():
         context.run_migrations()
