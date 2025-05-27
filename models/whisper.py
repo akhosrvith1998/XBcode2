@@ -1,9 +1,8 @@
-from sqlalchemy import Column, Integer, BigInteger, String, DateTime, func
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, BigInteger, String, DateTime
+from sqlalchemy.ext.asyncio import AsyncBase
+from sqlalchemy.sql import func
 
-Base = declarative_base()
-
-class Whisper(Base):
+class Whisper(AsyncBase):
     __tablename__ = "whispers"
     id = Column(Integer, primary_key=True)
     sender_id = Column(BigInteger, nullable=False)
