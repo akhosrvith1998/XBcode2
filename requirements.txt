@@ -1,6 +1,6 @@
 aiogram==2.25.1
 aiogram-dialog==1.7.0
-aiogram-contrib==0.13.0
+aiogram-contrib>=1.0.0,<1.2.0
 SQLAlchemy==2.0.35
 alembic==1.13.3
 python-dotenv==1.0.1
