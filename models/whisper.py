@@ -1,13 +1,9 @@
 from sqlalchemy import Column, Integer, BigInteger, String, DateTime
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import declarative_base
-
-Base = declarative_base(cls=AsyncAttrs)
-
 from sqlalchemy.sql import func
 
-class Base(AsyncBase):
-    __abstract__ = True
+Base = declarative_base(cls=AsyncAttrs)
 
 class Whisper(Base):
     __tablename__ = "whispers"
