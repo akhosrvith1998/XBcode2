@@ -209,9 +209,10 @@ async def process_reply_message(message: types.Message, target_id: int):
     types.InlineKeyboardButton("👁 مشاهده", callback_data=cb.new(action="view", whisper_id=str(whisper.id))),
     types.InlineKeyboardButton("🗑 حذف", callback_data=cb.new(action="delete", whisper_id=str(whisper.id))),
 )
-await message.reply(
-    f"نجوا به {receiver_id}\n\n```\n{secret_message}\n```",
-    parse_mode="MarkdownV2",
-    reply_markup=keyboard,
-)
-await message.reply(f"نجوا به {receiver_id} ارسال شد.")
+async def send_secret_message(message, receiver_id, secret_message, keyboard):
+    await message.reply(
+        f"نجوا به {receiver_id}\n\n```\n{secret_message}\n```",
+        parse_mode="MarkdownV2",
+        reply_markup=keyboard,
+    )
+    await message.reply(f"نجوا به {receiver_id} ارسال شد.")
