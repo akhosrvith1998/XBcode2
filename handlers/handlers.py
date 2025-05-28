@@ -1,5 +1,5 @@
 from aiogram import Dispatcher, types, Bot
-from aiogram.filters import Text
+from aiogram.filters.text import Text
 from aiogram.utils.callback_data import CallbackData
 from aiogram_inline_paginations.pagination import Paginator
 from aiocache import cached
